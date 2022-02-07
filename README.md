@@ -13,3 +13,11 @@ StudyStacks may be helpful if you find yourself in any of these situations:
 - You are a university student studying for midterms or finals.
 - You find yourself in a foreign country and need to learn the language.
 - You are meeting your girlfriend's parents soon and need to memorize facts about her dad's favourite football team.
+
+
+### User Stories
+
+- As a user, I want to be able to add a card to my stack.
+- As a user, I want to be able to create and add a new stack to my collection.
+- As a user, I want to be able to update the information on a card from my stack.
+- As a user, I want to be able to view my stack in a random order.
