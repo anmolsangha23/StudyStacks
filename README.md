@@ -17,7 +17,7 @@ StudyStacks may be helpful if you find yourself in any of these situations:
 
 ### User Stories
 
-- As a user, I want to be able to add a card to my stack.
+- As a user, I want to be able to add a new card to my stack of cards.
 - As a user, I want to be able to create and add a new stack to my collection.
 - As a user, I want to be able to update the information on a card from my stack.
 - As a user, I want to be able to view my stack in a random order.
