@@ -44,7 +44,13 @@ public class CardStackTest {
 
     @Test
     public void testGetFlagged() {
-        // stub
+        assertTrue(testCardStack.getFlagged().isEmpty());
+        testCardStack.addCard(testCard1);
+        testCardStack.addCard(testCard2);
+        testCardStack.addCard(testCard3);
+        testCard1.flagUpdate();
+        testCard3.flagUpdate();
+        assertEquals(Arrays.asList(testCard1,testCard3),testCardStack.getFlagged());
     }
 
 }
