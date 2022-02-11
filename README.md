@@ -19,5 +19,5 @@ StudyStacks may be helpful if you find yourself in any of these situations:
 
 - As a user, I want to be able to add a new card to my stack of cards.
 - As a user, I want to be able to flag a card I am having trouble with.
-- As a user, I want to be able to update the information on a card from my stack.
-- As a user, I want to be able to view my stack in a random order.
+- As a user, I want to be able to delete any stacks I have no need for.
+- As a user, I want to be able to view the cards in my stack in a random order.

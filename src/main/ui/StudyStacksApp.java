@@ -1,15 +1,16 @@
 package ui;
 
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.Collections;
 import java.util.Scanner;
 import model.*;
 
+// StudyStacks Index Card Application
 public class StudyStacksApp {
     private ArrayList<CardStack> allStacks;
     private Scanner input;
 
-    // EFFECTS: runs the StudyStacks application
+    // EFFECTS: initializes the StudyStacks application
     public StudyStacksApp() {
         allStacks = new ArrayList<>();
         input = new Scanner(System.in);
@@ -17,26 +18,28 @@ public class StudyStacksApp {
     }
 
     // MODIFIES: this
-    // EFFECTS: initializes service
+    // EFFECTS: runs the application starting from the main menu
     private void runStudyStacks() {
         boolean active = true;
         String command;
 
         while (active) {
-            welcomeDialog();
+            welcomeDialogue();
             command = input.nextLine();
-
             if (command.equals("e")) {
                 active = false;
             } else if (command.equals("n")) {
                 createNewStack();
             } else if (command.equals("v")) {
                 stackMenu();
+            } else {
+                System.out.println("Unrecognized input. Please try again\n");
             }
         }
     }
 
-    private void welcomeDialog() {
+    // EFFECTS: prints welcome menu with options to user
+    private void welcomeDialogue() {
         System.out.println("Welcome to StudyStacks!");
         System.out.println("What would you like to do today? \nSelect one of the following:");
         System.out.println("\t> New Stack (n)");
@@ -45,6 +48,7 @@ public class StudyStacksApp {
     }
 
     // MODIFIES: this
+    // EFFECTS: creates a new card stack with label from user input
     private void createNewStack() {
         System.out.println("Name of new stack:");
         CardStack newStack = new CardStack(input.nextLine());
@@ -52,16 +56,11 @@ public class StudyStacksApp {
         selectedStackMenu(newStack);
     }
 
+    // EFFECTS: prints list of current stacks with menu options and processes user input
     private void stackMenu() {
         String command;
         if (allStacks.isEmpty()) {
-            System.out.println("No current stacks. Create new stack? (y / n)");
-            command = input.nextLine();
-            if (command.equals("y")) {
-                createNewStack();
-            } else if (command.equals("n")) {
-                // welcomeDialog();
-            }
+            noStacks();
         } else {
             System.out.println("Your current stacks:");
             for (CardStack cs : allStacks) {
@@ -72,21 +71,26 @@ public class StudyStacksApp {
             for (CardStack cs : allStacks) {
                 if (command.equals(cs.getLabel())) {
                     selectedStackMenu(cs);
-                } else {
-                    runStudyStacks();
                 }
             }
         }
     }
 
+    // EFFECTS: prints menu options and processes user input for when no stacks present
+    private void noStacks() {
+        System.out.println("No current stacks. Create new stack?");
+        System.out.println("\t> Yes (y)");
+        System.out.println("\t> No, return to main menu (any other key)");
+        String command = input.nextLine();
+        if (command.equals("y")) {
+            createNewStack();
+        }
+    }
+
+    // EFFECTS: processes user input from printed options regarding currently selected stack
     private void selectedStackMenu(CardStack currentStack) {
         System.out.println(currentStack.getLabel() + " has " + currentStack.getCards().size() + " cards");
-        System.out.println("Select one of the following:");
-        System.out.println("\t> Add new card to stack (a)");
-        System.out.println("\t> View all cards in stack (v)");
-        System.out.println("\t> View all currently flagged cards (f)");
-        System.out.println("\t> Randomize and view stack (r)");
-        System.out.println("\t> Exit to all stacks (e)");
+        selectedStackDialogue();
         String command = input.nextLine();
         if (command.equals("a")) {
             addCardToStack(currentStack);
@@ -96,11 +100,28 @@ public class StudyStacksApp {
             viewFlaggedCards(currentStack);
         } else if (command.equals("r")) {
             viewRandomCards(currentStack);
+        } else if (command.equals("d")) {
+            deleteStack(currentStack);
         } else if (command.equals("e")) {
             stackMenu();
+        } else {
+            System.out.println("Unrecognized input. Returning to main menu\n");
         }
     }
 
+    // EFFECTS: prints dialogue of options for selected stack to console
+    private void selectedStackDialogue() {
+        System.out.println("Select one of the following:");
+        System.out.println("\t> Add new card to stack (a)");
+        System.out.println("\t> View all cards in stack (v)");
+        System.out.println("\t> View all currently flagged cards (f)");
+        System.out.println("\t> Randomize and view stack (r)");
+        System.out.println("\t> Delete stack (d)");
+        System.out.println("\t> Exit to all stacks (e)");
+    }
+
+    // MODIFIES: this
+    // EFFECTS: adds new card to current working stack with given user inputs
     private void addCardToStack(CardStack currentStack) {
         System.out.println("Side A of card:");
         String sideA = input.nextLine();
@@ -111,11 +132,21 @@ public class StudyStacksApp {
         selectedStackMenu(currentStack);
     }
 
+    // MODIFIES: this
+    // EFFECTS: deletes selected stack and all its cards; prints confirmation.
+    private void deleteStack(CardStack currentStack) {
+        allStacks.remove(currentStack);
+        System.out.println("Stack successfully deleted. Returning to main menu\n");
+    }
+
+    // MODIFIES: this
+    // EFFECTS: displays card in working stack with given user options to process input
     private void viewCardList(ArrayList<Card> currentCards) {
         int stackSize = currentCards.size();
+        checkZero(stackSize);
         boolean isSideA = true;
         for (int i = 0; i < stackSize;) {
-            cardListOptions(currentCards, stackSize, isSideA, i);
+            currentCardDialogue(currentCards, stackSize, isSideA, i);
             String command = input.nextLine();
             if (command.equals("c")) {
                 isSideA = !isSideA;
@@ -129,11 +160,21 @@ public class StudyStacksApp {
                 currentCards.get(i).flagUpdate();
             } else if (command.equals("e")) {
                 break;
+            } else {
+                System.out.println("Unrecognized input. Please try again\n");
             }
         }
     }
 
-    private void cardListOptions(ArrayList<Card> currentCards, int stackSize, boolean isSideA, int i) {
+    // EFFECTS: prints given statement if size is zero
+    private void checkZero(int size) {
+        if (size == 0) {
+            System.out.println("No cards present. Returning to main menu\n");
+        }
+    }
+
+    // EFFECTS: prints possible user inputs and information on current card in active stack
+    private void currentCardDialogue(ArrayList<Card> currentCards, int stackSize, boolean isSideA, int i) {
         System.out.println("-----------------------------");
         if (isSideA) {
             System.out.println(currentCards.get(i).getSideA());
@@ -157,13 +198,15 @@ public class StudyStacksApp {
         System.out.println("\t> Exit to main menu (e)");
     }
 
+    // EFFECTS: displays flagged cards in working stack with given user options to process input
     private void viewFlaggedCards(CardStack currentStack) {
         viewCardList(currentStack.getFlagged());
     }
 
+    // EFFECTS: displays randomized card from working stack with given user options to process input
     private void viewRandomCards(CardStack currentStack) {
-        Random random = new Random();
-
+        ArrayList<Card> randomized = new ArrayList<>(currentStack.getCards());
+        Collections.shuffle(randomized);
+        viewCardList(randomized);
     }
-
 }

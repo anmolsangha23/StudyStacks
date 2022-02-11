@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// Tests for methods in CardStack class
 public class CardStackTest {
     private CardStack testCardStack;
     private Card testCard1;
