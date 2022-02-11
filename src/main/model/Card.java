@@ -1,6 +1,7 @@
 package model;
 
 public class Card {
+    // TODO: include class level comments
     private String sideA;
     private String sideB;
     private boolean flag;

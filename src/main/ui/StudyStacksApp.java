@@ -22,7 +22,7 @@ public class StudyStacksApp {
         String command;
 
         while (active) {
-            welcomeMenu();
+            welcomeDialog();
             command = input.next();
 
             if (command.equals("e")) {
@@ -35,7 +35,7 @@ public class StudyStacksApp {
         }
     }
 
-    private void welcomeMenu() {
+    private void welcomeDialog() {
         System.out.println("Welcome to StudyStacks!");
         System.out.println("What would you like to do today? \nSelect one of the following:");
         System.out.println("\t> New Stack (n)");
@@ -59,12 +59,14 @@ public class StudyStacksApp {
             if (command.equals("y")) {
                 createNewStack();
             } else if (command.equals("n")) {
-                welcomeMenu();
+                // welcomeDialog();
             }
         } else {
             System.out.println("Your current stacks:");
-            // TODO: Create method to display name of stack for all stacks.
-            System.out.println("Type in name of stack to access");
+            for (CardStack cs : allStacks) {
+                System.out.println("> " + cs.getLabel());
+            }
+            System.out.println("Type in name of stack to access or any other input to return to main menu:");
             command = input.next();
             for (CardStack cs : allStacks) {
                 if (command.equals(cs.getLabel())) {
@@ -82,8 +84,51 @@ public class StudyStacksApp {
         System.out.println("\t> View all flagged cards (f)");
         System.out.println("\t> View all cards randomized (r)");
         System.out.println("\t> Exit to all stacks (e)");
+        String command = input.next();
+        if (command.equals("a")) {
+            addCardToStack(currentStack);
+        } else if (command.equals("v")) {
+            viewAllCards(currentStack);
+        } else if (command.equals("f")) {
+            viewFlaggedCards(currentStack);
+        } else if (command.equals("r")) {
+            viewRandomCards(currentStack);
+        } else if (command.equals("e")) {
+            stackMenu();
+        }
     }
 
 
+    private void addCardToStack(CardStack currentStack) {
+        System.out.println("Side A of card:");
+        String sideA = input.next();
+        System.out.println("Side B of card:");
+        String sideB = input.next();
+        Card newCard = new Card(sideA,sideB);
+        currentStack.addCard(newCard);
+        selectedStackMenu(currentStack);
+    }
+
+    private void viewAllCards(CardStack currentStack) {
+        int stackSize = currentStack.getCards().size();
+        for (int i = 0; i < stackSize;) {
+            System.out.println("-------------------");
+            System.out.println(currentStack.getCards().get(i).getSideA());
+            System.out.println("-------------------");
+            System.out.println("enter d for next");
+            String command = input.next();
+            if (command.equals("d")) {
+                i++;
+            }
+        }
+    }
+
+    private void viewRandomCards(CardStack currentStack) {
+        // stub
+    }
+
+    private void viewFlaggedCards(CardStack currentStack) {
+        // stub
+    }
 
 }
