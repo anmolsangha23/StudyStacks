@@ -26,14 +26,6 @@ public class Card {
         return flag;
     }
 
-    public void setSideA(String input) {
-        this.sideA = input;
-    }
-
-    public void setSideB(String input) {
-        this.sideB = input;
-    }
-
     // MODIFIES: this
     // EFFECTS: card is flagged if unflagged; card is unflagged if flagged.
     public void flagUpdate() {
