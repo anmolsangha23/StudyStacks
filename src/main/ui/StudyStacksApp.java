@@ -71,6 +71,7 @@ public class StudyStacksApp {
             for (CardStack cs : allStacks) {
                 if (command.equals(cs.getLabel())) {
                     selectedStackMenu(cs);
+                    return;
                 }
             }
         }
@@ -136,8 +137,7 @@ public class StudyStacksApp {
     // EFFECTS: deletes selected stack and all its cards; prints confirmation.
     private void deleteStack(CardStack currentStack) {
         allStacks.remove(currentStack);
-        System.out.println("Stack successfully deleted. Returning to stack menu\n");
-        stackMenu();
+        System.out.println("Stack successfully deleted. Returning to main menu\n");
     }
 
     // MODIFIES: this
