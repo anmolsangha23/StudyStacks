@@ -19,10 +19,6 @@ public class CardStack {
         return cards;
     }
 
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
     // MODIFIES: this
     // EFFECTS: adds newCard to the card stack
     public void addCard(Card newCard) {
