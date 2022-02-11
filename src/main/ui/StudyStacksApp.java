@@ -136,7 +136,8 @@ public class StudyStacksApp {
     // EFFECTS: deletes selected stack and all its cards; prints confirmation.
     private void deleteStack(CardStack currentStack) {
         allStacks.remove(currentStack);
-        System.out.println("Stack successfully deleted. Returning to main menu\n");
+        System.out.println("Stack successfully deleted. Returning to stack menu\n");
+        stackMenu();
     }
 
     // MODIFIES: this
