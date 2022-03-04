@@ -1,0 +1,37 @@
+[
+  {
+    "label" : "CPSC 210",
+    "cards" : [
+      {
+        "side_a" : "method",
+        "side_b" : "a collection of statements that perform some specific task and return the result to the caller",
+        "flag" : false
+      },
+      {
+        "side_a" : "inheritance",
+        "side_b" : "the process where one class acquires the properties (methods and fields) of another",
+        "flag" : false
+      },
+      {
+        "side_a" : "refactoring",
+        "side_b" : "the process of changing existing code without changing its external behaviour",
+        "flag" : false
+      }
+    ]
+  },
+  {
+   "label" : "MATH 200",
+    "cards" : [
+      {
+        "side_a" : "partial derivative for x of function: x^2 + y^2 ",
+        "side_b" : "2x",
+        "flag" : true
+      },
+      {
+        "side_a" : "saddle point",
+        "side_b" : "critical point which is neither local max or local min",
+        "flag" : true
+      }
+    ]
+  }
+]

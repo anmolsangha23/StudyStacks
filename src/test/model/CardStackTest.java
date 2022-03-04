@@ -63,7 +63,8 @@ public class CardStackTest {
         testCardStack.addCard(testCard2);
         JSONObject testJson = testCardStack.toJson();
         assertEquals("CPSC 210",testJson.get("label"));
-        // TODO: assertEquals(new ArrayList<Card>(Arrays.asList(testCard1, testCard2)), testJson.get("cards"));
+        // TODO: assertEquals(testCard1,testJson.getJSONArray("cards").getS);
+        // TODO: assertEquals(testCard2,testJson.getJSONArray("cards").get(1));
     }
 
     @Test

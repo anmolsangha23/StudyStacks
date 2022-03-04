@@ -17,6 +17,13 @@ public class Card implements Writable {
         flag = false;
     }
 
+    // EFFECTS: constructor for card with side A, side B as well as option for flagging card as boolean
+    public Card(String sideA, String sideB, boolean flag) {
+        this.sideA = sideA;
+        this.sideB = sideB;
+        this.flag = flag;
+    }
+
     public String getSideA() {
         return sideA;
     }

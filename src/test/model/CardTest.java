@@ -26,6 +26,14 @@ class CardTest {
     }
 
     @Test
+    public void testConstructorThreeParams() {
+        Card testCardThree = new Card("exception","unexpected condition passed in program", true);
+        assertEquals("exception",testCardThree.getSideA());
+        assertEquals("unexpected condition passed in program",testCardThree.getSideB());
+        assertTrue(testCardThree.isFlagged());
+    }
+
+    @Test
     public void testFlagUpdate() {
         testCard.flagUpdate();
         assertTrue(testCard.isFlagged());
@@ -39,7 +47,7 @@ class CardTest {
         assertEquals("method",testJson.get("side_a"));
         assertEquals("a collection of statements that perform some specific task " +
                 "and return the result to the caller", testJson.get("side_b"));
-        assertFalse((Boolean) testJson.get("flag"));
+        assertFalse(testJson.getBoolean("flag"));
     }
 
     @Test
@@ -49,7 +57,7 @@ class CardTest {
         assertEquals("method",testJson.get("side_a"));
         assertEquals("a collection of statements that perform some specific task " +
                 "and return the result to the caller", testJson.get("side_b"));
-        assertTrue((Boolean) testJson.get("flag"));
+        assertTrue(testJson.getBoolean("flag"));
     }
 
 }
