@@ -1,9 +1,13 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.util.ArrayList;
 
 // Represents a stack of index cards with a label for reference.
-public class CardStack {
+public class CardStack implements Writable {
     private String label;
     private ArrayList<Card> cards;
 
@@ -37,5 +41,25 @@ public class CardStack {
             }
         }
         return flaggedCards;
+    }
+
+
+    // EFFECTS: returns CardStack as a JSON Object with keys "label" and "cards",
+    //          for each field, whose values are in String and JSONArray of cards respectively.
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("label", label);
+        json.put("cards", cardsToJson());
+        return json;
+    }
+
+    // EFFECTS: returns Cards in current CardStack as a JSONArray
+    public JSONArray cardsToJson() {
+        JSONArray jsonArray = new JSONArray();
+        for (Card c : cards) {
+            jsonArray.put(c.toJson());
+        }
+        return jsonArray;
     }
 }

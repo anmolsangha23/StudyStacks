@@ -1,7 +1,10 @@
 package model;
 
+import org.json.JSONObject;
+import persistence.Writable;
+
 // Represents an index card containing two sides of text and whether it is flagged for reference.
-public class Card {
+public class Card implements Writable {
     private String sideA;
     private String sideB;
     private boolean flag;
@@ -30,5 +33,15 @@ public class Card {
     // EFFECTS: card is flagged if unflagged; card is unflagged if flagged.
     public void flagUpdate() {
         flag = !flag;
+    }
+
+    // EFFECTS: returns Card as a JSON Object with keys "side_a", "side_b", "flag" for each field of Card.
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("side_a", sideA);
+        json.put("side_b", sideB);
+        json.put("flag", flag);
+        return json;
     }
 }

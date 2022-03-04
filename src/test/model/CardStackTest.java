@@ -1,8 +1,11 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -52,6 +55,23 @@ public class CardStackTest {
         testCard1.flagUpdate();
         testCard3.flagUpdate();
         assertEquals(Arrays.asList(testCard1,testCard3),testCardStack.getFlagged());
+    }
+
+    @Test
+    public void testToJson() {
+        testCardStack.addCard(testCard1);
+        testCardStack.addCard(testCard2);
+        JSONObject testJson = testCardStack.toJson();
+        assertEquals("CPSC 210",testJson.get("label"));
+        // TODO: assertEquals(new ArrayList<Card>(Arrays.asList(testCard1, testCard2)), testJson.get("cards"));
+    }
+
+    @Test
+    public void testCardsToJSon() {
+        testCardStack.addCard(testCard1);
+        testCardStack.addCard(testCard2);
+        JSONArray jsonArray = testCardStack.cardsToJson();
+        // TODO: assertEquals for jsonArray
     }
 
 }
