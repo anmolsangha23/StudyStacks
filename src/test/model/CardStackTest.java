@@ -1,7 +1,5 @@
 package model;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -55,24 +53,6 @@ public class CardStackTest {
         testCard1.flagUpdate();
         testCard3.flagUpdate();
         assertEquals(Arrays.asList(testCard1,testCard3),testCardStack.getFlagged());
-    }
-
-    @Test
-    public void testToJson() {
-        testCardStack.addCard(testCard1);
-        testCardStack.addCard(testCard2);
-        JSONObject testJson = testCardStack.toJson();
-        assertEquals("CPSC 210",testJson.get("label"));
-        // TODO: assertEquals(testCard1,testJson.getJSONArray("cards").getS);
-        // TODO: assertEquals(testCard2,testJson.getJSONArray("cards").get(1));
-    }
-
-    @Test
-    public void testCardsToJSon() {
-        testCardStack.addCard(testCard1);
-        testCardStack.addCard(testCard2);
-        JSONArray jsonArray = testCardStack.cardsToJson();
-        // TODO: assertEquals for jsonArray
     }
 
 }

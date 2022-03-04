@@ -63,6 +63,7 @@ public class StudyStacksApp {
         System.out.println("\t> Exit (e)");
     }
 
+    // MODIFIES: this
     // EFFECTS: loads all card stacks previously saved from file
     private void loadAllStacks() {
         try {
@@ -73,6 +74,8 @@ public class StudyStacksApp {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: saves all card stacks to file
     private void saveAllStacks() {
         try {
             writer.open();
