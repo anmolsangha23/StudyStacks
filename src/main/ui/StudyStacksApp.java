@@ -1,19 +1,29 @@
 package ui;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 import model.*;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
 // StudyStacks Index Card Application
 public class StudyStacksApp {
+    private static final String SAVED_STACKS_JSON = "./data/savedStacks.json";
+
     private ArrayList<CardStack> allStacks;
     private Scanner input;
+    private JsonWriter writer;
+    private JsonReader reader;
 
     // EFFECTS: initializes the StudyStacks application
-    public StudyStacksApp() {
+    public StudyStacksApp() throws FileNotFoundException {
         allStacks = new ArrayList<>();
         input = new Scanner(System.in);
+        writer = new JsonWriter(SAVED_STACKS_JSON);
+        reader = new JsonReader(SAVED_STACKS_JSON);
         runStudyStacks();
     }
 
@@ -32,6 +42,10 @@ public class StudyStacksApp {
                 createNewStack();
             } else if (command.equals("v")) {
                 stackMenu();
+            } else if (command.equals("s")) {
+                saveAllStacks();
+            } else if (command.equals("l")) {
+                loadAllStacks();
             } else {
                 System.out.println("Unrecognized input. Please try again\n");
             }
@@ -44,7 +58,30 @@ public class StudyStacksApp {
         System.out.println("What would you like to do today? \nSelect one of the following:");
         System.out.println("\t> New Stack (n)");
         System.out.println("\t> View Stacks (v)");
+        System.out.println("\t> Save Stacks From File (s)");
+        System.out.println("\t> Load Stacks From File (l)");
         System.out.println("\t> Exit (e)");
+    }
+
+    // EFFECTS: loads all card stacks previously saved from file
+    private void loadAllStacks() {
+        try {
+            allStacks = reader.read();
+            System.out.println("Loaded previously saved card stacks");
+        } catch (IOException e) {
+            System.out.println("Given file " + SAVED_STACKS_JSON + "is not readable");
+        }
+    }
+
+    private void saveAllStacks() {
+        try {
+            writer.open();
+            writer.write(allStacks);
+            writer.close();
+            System.out.println("Saved all card stacks to " + SAVED_STACKS_JSON);
+        } catch (FileNotFoundException e) {
+            System.out.println(SAVED_STACKS_JSON + " was unable to be opened to save card stacks");
+        }
     }
 
     // MODIFIES: this
