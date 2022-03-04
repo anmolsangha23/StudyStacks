@@ -3,12 +3,12 @@
         {
             "flag": false,
             "side_b": "you are currently reading this",
-            "side_a": "fact number one"
+            "side_a": "fact one"
         },
         {
             "flag": false,
             "side_b": "some people believe in ghosts",
-            "side_a": "fact number two"
+            "side_a": "fact two"
         }
     ],
     "label": "truth"
