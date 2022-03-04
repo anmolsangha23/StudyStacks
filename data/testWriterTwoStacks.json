@@ -1,0 +1,32 @@
+[
+    {
+        "cards": [
+            {
+                "flag": false,
+                "side_b": "An object-orientated programming language",
+                "side_a": "Java"
+            },
+            {
+                "flag": false,
+                "side_b": "Diagram to describe program structure",
+                "side_a": "UML"
+            }
+        ],
+        "label": "CPSC 210"
+    },
+    {
+        "cards": [
+            {
+                "flag": false,
+                "side_b": "circulating money supply",
+                "side_a": "M1"
+            },
+            {
+                "flag": false,
+                "side_b": "Expansion of the money supply",
+                "side_a": "Inflation"
+            }
+        ],
+        "label": "Notes on Supply-side Economics"
+    }
+]

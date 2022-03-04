@@ -11,6 +11,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class JsonReaderTest {
 
+    // Method taken from JSONReader class in
+    // https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+    //
     @Test
     public void testReaderFileNotFound() {
         JsonReader testReader = new JsonReader("./data/imaginaryFile.json");
@@ -22,6 +25,10 @@ public class JsonReaderTest {
         }
     }
 
+
+    // Method taken from JSONReader class in
+    // https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo
+    //
     @Test
     public void testReaderEmpty() {
         JsonReader testReader = new JsonReader("./data/testReaderEmpty.json");
