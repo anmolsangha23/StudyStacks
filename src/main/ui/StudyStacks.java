@@ -17,8 +17,10 @@ public class StudyStacks extends JFrame {
     JMenuItem save;
     JMenuItem load;
     StackList stackList;
+    JSplitPane verticalSplitPane;
     JButton newStackButton;
     JButton deleteButton;
+    JButton newCardButton;
     JList list;
     DefaultListModel listModel;
     private ArrayList<CardStack> allStacks;
@@ -49,8 +51,10 @@ public class StudyStacks extends JFrame {
         newStackButton.addActionListener(new NewStackListener());
         deleteButton = new JButton("Delete Stack");
         deleteButton.addActionListener(new DeleteListener());
+        newCardButton = new JButton("New Card");
+        newCardButton.addActionListener(new NewCardListener());
         JPanel buttonPanel = new JPanel();
-        JSplitPane verticalSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        verticalSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         verticalSplitPane.setTopComponent(buttonPanel);
         CurrentCard currentCard = new CurrentCard(currentStack);
         verticalSplitPane.setBottomComponent(currentCard);
@@ -62,6 +66,7 @@ public class StudyStacks extends JFrame {
 
         buttonPanel.add(newStackButton);
         buttonPanel.add(deleteButton);
+        buttonPanel.add(newCardButton);
         add(splitPane);
 
         pack();
@@ -70,7 +75,7 @@ public class StudyStacks extends JFrame {
     }
 
     public static void main(String[] args) {
-        new StudyStacks();
+        StudyStacks studyStacks = new StudyStacks();
     }
 
 
@@ -100,8 +105,10 @@ public class StudyStacks extends JFrame {
                 int index = list.getSelectedIndex();
                 if (!(index >= 0)) {
                     deleteButton.setEnabled(false);
+                    newCardButton.setEnabled(false);
                 } else {
                     deleteButton.setEnabled(true);
+                    newCardButton.setEnabled(true);
                 }
             }
         }
@@ -135,8 +142,25 @@ public class StudyStacks extends JFrame {
         }
     }
 
-    private class CurrentCard extends JLabel {
+    private class NewCardListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String newSideA = JOptionPane.showInputDialog(list, "Side A:",
+                    "Create New Card", JOptionPane.PLAIN_MESSAGE);
+            String newSideB = JOptionPane.showInputDialog(list, "Side B:",
+                    "Create New Card", JOptionPane.PLAIN_MESSAGE);
+            Card newCard = new Card(newSideA,newSideB);
+            int index = list.getSelectedIndex();
+            currentStack.addCard(newCard);
+            allStacks.get(index).getCards().add(newCard);
+        }
+    }
+
+    private class CurrentCard extends JTextArea {
         public CurrentCard(CardStack cardStack) {
+            super();
+            this.setEditable(false);
+            this.setBackground(Color.white);
             if (cardStack != null) {
                 if (cardStack.getCards().isEmpty()) {
                     // display graphic image
@@ -145,6 +169,14 @@ public class StudyStacks extends JFrame {
                 }
             }
         }
+    }
+
+    public void nextCard() {
+        // displays next card in stack
+    }
+
+    public void previousCard() {
+        // displays previous card in stack
     }
 
     private class CardCreatorListener implements ListSelectionListener {
@@ -156,7 +188,7 @@ public class StudyStacks extends JFrame {
             } catch (Exception ee) {
                 currentStack = null;
             }
-            new CurrentCard(currentStack);
+            verticalSplitPane.setBottomComponent(new CurrentCard(currentStack));
         }
     }
 }
