@@ -1,5 +1,6 @@
 package ui;
 
+import model.Card;
 import model.CardStack;
 
 import javax.swing.*;
@@ -10,7 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class StudyStacks extends JFrame implements ActionListener {
+public class StudyStacks extends JFrame {
     JMenuBar menuBar;
     JMenu file;
     JMenuItem save;
@@ -21,12 +22,15 @@ public class StudyStacks extends JFrame implements ActionListener {
     JList list;
     DefaultListModel listModel;
     private ArrayList<CardStack> allStacks;
+    private CardStack currentStack = null;
     // fields here for components
 
     public StudyStacks() {
         super("StudyStacks");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(800, 600));
+
+        allStacks = new ArrayList<>();
 
         // create a menu component with save and load capabilities
         menuBar = new JMenuBar();
@@ -46,15 +50,15 @@ public class StudyStacks extends JFrame implements ActionListener {
         deleteButton = new JButton("Delete Stack");
         deleteButton.addActionListener(new DeleteListener());
         JPanel buttonPanel = new JPanel();
-        JSplitPane horizSplitPane = new JSplitPane();
-        horizSplitPane.setTopComponent(buttonPanel);
-        // CardView cardview = new CardView();
-        horizSplitPane.setBottomComponent(new JLabel("card here"));
+        JSplitPane verticalSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        verticalSplitPane.setTopComponent(buttonPanel);
+        CurrentCard currentCard = new CurrentCard(currentStack);
+        verticalSplitPane.setBottomComponent(currentCard);
 
         JSplitPane splitPane = new JSplitPane();
         stackList = new StackList();
         splitPane.setLeftComponent(stackList);
-        splitPane.setRightComponent(horizSplitPane);
+        splitPane.setRightComponent(verticalSplitPane);
 
         buttonPanel.add(newStackButton);
         buttonPanel.add(deleteButton);
@@ -69,17 +73,14 @@ public class StudyStacks extends JFrame implements ActionListener {
         new StudyStacks();
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
 
-    }
-
-    public class StackList extends JPanel implements ListSelectionListener, ActionListener {
+    public class StackList extends JPanel implements ListSelectionListener {
 
         public StackList() {
             listModel = new DefaultListModel();
-            allStacks = new ArrayList<>();
-            allStacks.add(new CardStack("CPSC 210"));
+            CardStack cpsc210 = new CardStack("CPSC 210");
+            cpsc210.addCard(new Card("method","function"));
+            allStacks.add(cpsc210);
             allStacks.add(new CardStack("Notes on misc."));
             for (CardStack c : allStacks) {
                 listModel.addElement(c.getLabel());
@@ -87,6 +88,7 @@ public class StudyStacks extends JFrame implements ActionListener {
             list = new JList(listModel);
             list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             list.addListSelectionListener(this);
+            list.addListSelectionListener(new CardCreatorListener());
             list.setVisibleRowCount(10);
             JScrollPane listScrollPane = new JScrollPane(list);
             add(listScrollPane);
@@ -95,18 +97,13 @@ public class StudyStacks extends JFrame implements ActionListener {
         @Override
         public void valueChanged(ListSelectionEvent e) {
             if (e.getValueIsAdjusting() == false) {
-
-                if (!(list.getSelectedIndex() >= 0)) {
+                int index = list.getSelectedIndex();
+                if (!(index >= 0)) {
                     deleteButton.setEnabled(false);
                 } else {
                     deleteButton.setEnabled(true);
                 }
             }
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
         }
     }
 
@@ -138,9 +135,28 @@ public class StudyStacks extends JFrame implements ActionListener {
         }
     }
 
-    private class CardView extends JLabel {
-        public CardView(String side) {
-            super(side);
+    private class CurrentCard extends JLabel {
+        public CurrentCard(CardStack cardStack) {
+            if (cardStack != null) {
+                if (cardStack.getCards().isEmpty()) {
+                    // display graphic image
+                } else {
+                    setText(cardStack.getCards().get(0).getSideA());
+                }
+            }
+        }
+    }
+
+    private class CardCreatorListener implements ListSelectionListener {
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            int index = list.getSelectedIndex();
+            try {
+                currentStack = allStacks.get(index);
+            } catch (Exception ee) {
+                currentStack = null;
+            }
+            new CurrentCard(currentStack);
         }
     }
 }
