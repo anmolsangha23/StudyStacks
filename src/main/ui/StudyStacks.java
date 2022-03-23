@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import static java.awt.Image.*;
+
 public class StudyStacks extends JFrame {
     JMenuBar menuBar;
     JMenu file;
@@ -20,11 +22,19 @@ public class StudyStacks extends JFrame {
     JSplitPane verticalSplitPane;
     JButton newStackButton;
     JButton deleteButton;
+    JButton viewFlaggedCardsButton;
+    JButton flipCardButton;
     JButton newCardButton;
+    JButton randomizeButton;
+    JButton nextCardButton;
+    JButton previousCardButton;
+    JButton flagCardButton;
+    ImageIcon flagIcon;
     JList list;
     DefaultListModel listModel;
     private ArrayList<CardStack> allStacks;
-    private CardStack currentStack = null;
+    private CardStack currentStack;
+    CurrentCardPanel currentCardPanel;
     // fields here for components
 
     public StudyStacks() {
@@ -53,11 +63,24 @@ public class StudyStacks extends JFrame {
         deleteButton.addActionListener(new DeleteListener());
         newCardButton = new JButton("New Card");
         newCardButton.addActionListener(new NewCardListener());
+        randomizeButton = new JButton("Randomize!");
+        randomizeButton.addActionListener(new RandomizeActionListener());
+        nextCardButton = new JButton("Next Card");
+        nextCardButton.addActionListener(new NextCardListener());
+        previousCardButton = new JButton("Previous Card");
+        previousCardButton.addActionListener(new PreviousCardListener());
+        viewFlaggedCardsButton = new JButton("View Flagged Cards");
+        viewFlaggedCardsButton.addActionListener(new ViewFlaggedCardsListener());
+        flipCardButton = new JButton("Flip Card");
+        flipCardButton.addActionListener(new FlagCardListener());
+        initFlagIcon();
+        flagCardButton = new JButton(flagIcon);
+        flagCardButton.addActionListener(new FlagCardListener());
         JPanel buttonPanel = new JPanel();
         verticalSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         verticalSplitPane.setTopComponent(buttonPanel);
-        CurrentCard currentCard = new CurrentCard(currentStack);
-        verticalSplitPane.setBottomComponent(currentCard);
+        currentCardPanel = new CurrentCardPanel(currentStack);
+        verticalSplitPane.setBottomComponent(currentCardPanel);
 
         JSplitPane splitPane = new JSplitPane();
         stackList = new StackList();
@@ -66,7 +89,13 @@ public class StudyStacks extends JFrame {
 
         buttonPanel.add(newStackButton);
         buttonPanel.add(deleteButton);
+        buttonPanel.add(viewFlaggedCardsButton);
+        buttonPanel.add(randomizeButton);
         buttonPanel.add(newCardButton);
+        buttonPanel.add(flagCardButton);
+        buttonPanel.add(nextCardButton);
+        buttonPanel.add(previousCardButton);
+        buttonPanel.add(flipCardButton);
         add(splitPane);
 
         pack();
@@ -106,12 +135,31 @@ public class StudyStacks extends JFrame {
                 if (!(index >= 0)) {
                     deleteButton.setEnabled(false);
                     newCardButton.setEnabled(false);
+                    randomizeButton.setEnabled(false);
+                    nextCardButton.setEnabled(false);
+                    previousCardButton.setEnabled(false);
+                    flagCardButton.setEnabled(false);
+                    viewFlaggedCardsButton.setEnabled(false);
+                    flipCardButton.setEnabled(false);
                 } else {
                     deleteButton.setEnabled(true);
                     newCardButton.setEnabled(true);
+                    randomizeButton.setEnabled(true);
+                    nextCardButton.setEnabled(true);
+                    previousCardButton.setEnabled(true);
+                    flagCardButton.setEnabled(true);
+                    viewFlaggedCardsButton.setEnabled(true);
+                    flipCardButton.setEnabled(true);
                 }
             }
         }
+    }
+
+    public void initFlagIcon() {
+        ImageIcon largeFlagIcon = new ImageIcon("./data/flagicon.jpg");
+        Image flagImage = largeFlagIcon.getImage();
+        Image newImg = flagImage.getScaledInstance(20, 20,  SCALE_SMOOTH);
+        flagIcon = new ImageIcon(newImg);
     }
 
     private class DeleteListener implements ActionListener {
@@ -152,31 +200,96 @@ public class StudyStacks extends JFrame {
             Card newCard = new Card(newSideA,newSideB);
             int index = list.getSelectedIndex();
             currentStack.addCard(newCard);
+            // fix bug regarding current stack being null at beginning.
             allStacks.get(index).getCards().add(newCard);
         }
     }
 
-    private class CurrentCard extends JTextArea {
-        public CurrentCard(CardStack cardStack) {
-            super();
-            this.setEditable(false);
-            this.setBackground(Color.white);
-            if (cardStack != null) {
-                if (cardStack.getCards().isEmpty()) {
-                    // display graphic image
-                } else {
-                    setText(cardStack.getCards().get(0).getSideA());
-                }
-            }
+    // randomizes Cards in selected card stack.
+    private class RandomizeActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
         }
     }
 
-    public void nextCard() {
-        // displays next card in stack
+    private class CurrentCardPanel extends JPanel {
+        CardStack currentCardStack;
+        Card currentCard;
+        int index = 0;
+        JEditorPane cardDisplay;
+
+        public CurrentCardPanel(CardStack cardStack) {
+            cardDisplay = new JTextPane();
+            cardDisplay.setEditable(false);
+            cardDisplay.setBackground(Color.white);
+            cardDisplay.setContentType("text/plain");
+            this.currentCardStack = cardStack;
+            if (cardStack != null) {
+                if (cardStack.getCards().isEmpty()) {
+                    displayGraphic();
+                } else {
+                    currentCard = currentCardStack.getCards().get(index);
+                    displayCard();
+                }
+            } else {
+                displayGraphic();
+            }
+        }
+
+        public void displayGraphic() {
+            ImageIcon splashIcon = new ImageIcon("./data/studyStacksGraphic.jpg");
+            Image flagImage = splashIcon.getImage();
+            Image scaledSplashImage = flagImage.getScaledInstance(500, 300,SCALE_SMOOTH);
+            splashIcon = new ImageIcon(scaledSplashImage);
+            JLabel splashImage = new JLabel(splashIcon);
+            add(splashImage);
+        }
+
+        public void displayCard() {
+            cardDisplay.setText(currentCard.getSideA());
+            add(cardDisplay);
+        }
+
+        public void nextCard() {
+            index++;
+            displayCard();
+            // add errors for last card.
+        }
+
+        public void previousCard() {
+            index--;
+            displayCard();
+            // add errors for no prev card.
+        }
+
+        public void flipCard() {
+            cardDisplay.setText(currentCard.getSideB());
+            add(cardDisplay);
+        }
+
+
     }
 
-    public void previousCard() {
-        // displays previous card in stack
+    private class NextCardListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            currentCardPanel.nextCard();
+        }
+    }
+
+    private class PreviousCardListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            currentCardPanel.previousCard();
+        }
+    }
+
+    private class FlagCardListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
     }
 
     private class CardCreatorListener implements ListSelectionListener {
@@ -188,7 +301,22 @@ public class StudyStacks extends JFrame {
             } catch (Exception ee) {
                 currentStack = null;
             }
-            verticalSplitPane.setBottomComponent(new CurrentCard(currentStack));
+            verticalSplitPane.setBottomComponent(new CurrentCardPanel(currentStack));
         }
     }
+
+    private class ViewFlaggedCardsListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
+    }
+
+    private class FlipCardListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            currentCardPanel.flipCard();
+        }
+    }
+
 }
