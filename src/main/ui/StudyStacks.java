@@ -210,6 +210,8 @@ public class StudyStacks extends JFrame {
                         "Create New Card", JOptionPane.PLAIN_MESSAGE);
                 Card newCard = new Card(newSideA,newSideB);
                 currentStack.addCard(newCard);
+                currentCardPanel.remove(currentCardPanel.splashImage);
+                currentCardPanel.displayCard();
                 currentCardPanel.revalidate();
                 currentCardPanel.repaint();
             }
@@ -358,7 +360,9 @@ public class StudyStacks extends JFrame {
     private class FlipCardListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            currentCardPanel.flipCard();
+            if (list.getSelectedIndex() >= 0) {
+                currentCardPanel.flipCard();
+            }
         }
     }
 
@@ -377,7 +381,7 @@ public class StudyStacks extends JFrame {
     }
 
     // TODO: save listener , load listener, fix list resizing issue
-    // TODO: see if you can update from image to text dynamically
+    // TODO: see if you can update from image to text dynamically. got it to work in newcard listener.
     // TODO: randomizer, view flagged cards. trick for both would be to change display pane for alternate cards
     // TODO: style, fonts, centering
 
