@@ -136,6 +136,7 @@ public class StudyStacks extends JFrame {
             list.addListSelectionListener(new CardCreatorListener());
             list.setVisibleRowCount(30);
             JScrollPane listScrollPane = new JScrollPane(list);
+            listScrollPane.setPreferredSize(new Dimension(100,500));
             add(listScrollPane, BorderLayout.CENTER);
         }
 
@@ -282,6 +283,7 @@ public class StudyStacks extends JFrame {
         public void nextCard() {
             if (!checkLast()) {
                 cardIndex++;
+                isSideA = true;
                 displayCard();
             }
         }
@@ -289,6 +291,7 @@ public class StudyStacks extends JFrame {
         public void previousCard() {
             if (!checkFirst()) {
                 cardIndex--;
+                isSideA = true;
                 displayCard();
             }
         }
@@ -380,8 +383,8 @@ public class StudyStacks extends JFrame {
         }
     }
 
-    // TODO: save listener , load listener, fix list resizing issue
-    // TODO: see if you can update from image to text dynamically. got it to work in newcard listener.
+    // TODO: save listener , load listener
+    // TODO: confirm this works: if you can update from image to text dynamically. got it to work in newcard listener.
     // TODO: randomizer, view flagged cards. trick for both would be to change display pane for alternate cards
     // TODO: style, fonts, centering
 
