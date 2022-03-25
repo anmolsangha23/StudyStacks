@@ -9,8 +9,8 @@ import model.*;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
-// StudyStacks Index Card Application
-public class StudyStacksApp {
+// Console Version for StudyStacks Index Card Application
+public class StudyStacksConsoleVersion {
     private static final String SAVED_STACKS_JSON = "./data/savedStacks.json";
 
     private ArrayList<CardStack> allStacks;
@@ -19,7 +19,7 @@ public class StudyStacksApp {
     private JsonReader reader;
 
     // EFFECTS: initializes the StudyStacks application
-    public StudyStacksApp() throws FileNotFoundException {
+    public StudyStacksConsoleVersion() throws FileNotFoundException {
         allStacks = new ArrayList<>();
         input = new Scanner(System.in);
         writer = new JsonWriter(SAVED_STACKS_JSON);

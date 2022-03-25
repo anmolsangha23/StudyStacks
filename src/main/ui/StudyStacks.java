@@ -18,6 +18,7 @@ import java.util.Collections;
 
 import static java.awt.Image.*;
 
+// StudyStacks Index Card Application GUI Version
 public class StudyStacks extends JFrame {
     JMenuBar menuBar;
     JMenu file;
@@ -38,15 +39,15 @@ public class StudyStacks extends JFrame {
     ImageIcon flagIcon;
     JList list;
     DefaultListModel listModel;
+    CurrentCardPanel currentCardPanel;
     private ArrayList<CardStack> allStacks;
     private CardStack currentStack;
     private JsonWriter writer;
     private JsonReader reader;
 
-    CurrentCardPanel currentCardPanel;
-
     private static final String SAVED_STACKS_JSON = "./data/savedStacks.json";
 
+    // EFFECTS: initializes the StudyStacks application
     public StudyStacks() {
         super("StudyStacks");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -56,34 +57,33 @@ public class StudyStacks extends JFrame {
         }
         writer = new JsonWriter(SAVED_STACKS_JSON);
         reader = new JsonReader(SAVED_STACKS_JSON);
-
         initMenu();
-
-        // add next functions to frame
-
         JPanel buttonPanel = initButtons();
-
         verticalSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         verticalSplitPane.setTopComponent(buttonPanel);
         currentCardPanel = new CurrentCardPanel(currentStack);
         verticalSplitPane.setBottomComponent(currentCardPanel);
-
-        splitPane = new JSplitPane();
         if (stackList == null) {
             stackList = new StackList();
         }
-        splitPane.setLeftComponent(stackList);
-        splitPane.setRightComponent(verticalSplitPane);
-        splitPane.setDividerLocation(150);
-
-
-        add(splitPane);
-
+        initSplitPane();
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
+    // MODIFIES: this
+    // EFFECTS: initializes main split pane in frame
+    private void initSplitPane() {
+        splitPane = new JSplitPane();
+        splitPane.setLeftComponent(stackList);
+        splitPane.setRightComponent(verticalSplitPane);
+        splitPane.setDividerLocation(150);
+        add(splitPane);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: initializes all buttons and adds listeners, returns buttonPanel
     private JPanel initButtons() {
         newStackButton = new JButton("New Stack");
         newStackButton.addActionListener(new NewStackListener());
@@ -109,6 +109,8 @@ public class StudyStacks extends JFrame {
         return buttonPanel;
     }
 
+    // MODIFIES: this
+    // EFFECTS: adds all buttons to buttonPanel
     private void addButtons(JPanel buttonPanel) {
         buttonPanel.add(newStackButton);
         buttonPanel.add(deleteButton);
@@ -121,6 +123,8 @@ public class StudyStacks extends JFrame {
         buttonPanel.add(flipCardButton);
     }
 
+    // MODIFIES: this
+    // EFFECTS: initializes menu and adds listeners
     private void initMenu() {
         // create a menu component with save and load capabilities
         menuBar = new JMenuBar();
@@ -135,13 +139,11 @@ public class StudyStacks extends JFrame {
         setJMenuBar(menuBar);
     }
 
-    public static void main(String[] args) {
-        StudyStacks studyStacks = new StudyStacks();
-    }
-
+    // Represents panel for displayed list of stacks
     public class StackList extends JPanel {
         JScrollPane listScrollPane;
 
+        // EFFECTS: constructor for initialization of StackList with current allStacks
         public StackList() {
             listModel = new DefaultListModel();
             for (CardStack c : allStacks) {
@@ -149,7 +151,7 @@ public class StudyStacks extends JFrame {
             }
             list = new JList(listModel);
             list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            list.addListSelectionListener(new CardCreatorListener());
+            list.addListSelectionListener(new StackListListener());
             list.setVisibleRowCount(30);
             listScrollPane = new JScrollPane(list);
             listScrollPane.setPreferredSize(new Dimension(100,500));
@@ -157,6 +159,8 @@ public class StudyStacks extends JFrame {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: initializes flagIcon from given image location
     public void initFlagIcon() {
         ImageIcon largeFlagIcon = new ImageIcon("./data/flagicon.jpg");
         Image flagImage = largeFlagIcon.getImage();
@@ -164,7 +168,11 @@ public class StudyStacks extends JFrame {
         flagIcon = new ImageIcon(newImg);
     }
 
+    // Represents listener for creating a new stack for newStackButton
     private class NewStackListener implements ActionListener {
+
+        // MODIFIES: StudyStacks
+        // EFFECTS: creates new stack with inputted name upon action event (button click)
         @Override
         public void actionPerformed(ActionEvent e) {
             String newLabel = JOptionPane.showInputDialog(list, "Name of new stack:",
@@ -178,7 +186,11 @@ public class StudyStacks extends JFrame {
         }
     }
 
+    // Represents listener for newCardButton for creating a new card in current stack
     private class NewCardListener implements ActionListener {
+
+        // MODIFIES: StudyStacks
+        // EFFECTS: creates new card in current stack with inputted fields upon action event (button click)
         @Override
         public void actionPerformed(ActionEvent e) {
             if (currentStack != null) {
@@ -202,14 +214,17 @@ public class StudyStacks extends JFrame {
         }
     }
 
+    // Represents listener for deleting selected stack for deleteButton
     private class DeleteListener implements ActionListener {
+
+        // MODIFIES: StudyStacks
+        // EFFECTS: deletes selected stack upon action event (button click)
         @Override
         public void actionPerformed(ActionEvent e) {
             int index = list.getSelectedIndex();
             if (index >= 0) {
                 allStacks.remove(index);
                 listModel.remove(index);
-
             }
             if (index == listModel.getSize()) {
                 index--;
@@ -225,6 +240,7 @@ public class StudyStacks extends JFrame {
         }
     }
 
+    // Represents panel for displaying current card contents or splash image
     private class CurrentCardPanel extends JPanel {
         CardStack currentCardStack;
         Card currentCard;
@@ -233,6 +249,7 @@ public class StudyStacks extends JFrame {
         int cardIndex = 0;
         JTextPane cardDisplay = new JTextPane();
 
+        // EFFECTS: Constructor for CurrentCardPanel displaying card or graphic for given CardStack
         public CurrentCardPanel(CardStack cardStack) {
             cardDisplay.setEditable(false);
             cardDisplay.setBackground(Color.white);
@@ -250,6 +267,8 @@ public class StudyStacks extends JFrame {
             }
         }
 
+        // MODIFIES: this
+        // EFFECTS: removes card display and displays splash image instead
         public void displayGraphic() {
             initSplashImage();
             remove(cardDisplay);
@@ -258,6 +277,8 @@ public class StudyStacks extends JFrame {
             add(splashImage);
         }
 
+        // MODIFIES: this
+        // EFFECTS: initializes splashImage with given image location
         private void initSplashImage() {
             ImageIcon splashIcon = new ImageIcon("./data/studyStacksGraphic.jpg");
             Image flagImage = splashIcon.getImage();
@@ -266,6 +287,8 @@ public class StudyStacks extends JFrame {
             splashImage = new JLabel(splashIcon);
         }
 
+        // MODIFIES: this
+        // EFFECTS: displays current card in CurrentCardPanel
         public void displayCard() {
             if (currentCardStack != null) {
                 currentCard = currentCardStack.getCards().get(cardIndex);
@@ -280,6 +303,8 @@ public class StudyStacks extends JFrame {
             }
         }
 
+        // MODIFIES: this
+        // EFFECTS: displays next card in stack in CurrentCardPanel
         public void nextCard() {
             if (!checkLast()) {
                 cardIndex++;
@@ -288,6 +313,8 @@ public class StudyStacks extends JFrame {
             }
         }
 
+        // MODIFIES: this
+        // EFFECTS: displays previous card in stack in CurrentCardPanel
         public void previousCard() {
             if (!checkFirst()) {
                 cardIndex--;
@@ -296,21 +323,29 @@ public class StudyStacks extends JFrame {
             }
         }
 
+        // EFFECTS: checks if card is first card in stack
         public boolean checkFirst() {
             return cardIndex <= 0;
         }
 
+        // EFFECTS: checks if card is last card in stack
         public boolean checkLast() {
             return ((cardIndex + 1) >= currentCardStack.getCards().size());
         }
 
+        // MODIFIES: this
+        // EFFECTS: displays other side of card in stack in CurrentCardPanel
         public void flipCard() {
             isSideA = !isSideA;
             displayCard();
         }
     }
 
+    // Represents listener for nextCardButton for advancing to next card in current stack
     private class NextCardListener implements ActionListener {
+
+        // MODIFIES: StudyStacks
+        // EFFECTS: advances to next card in selected stack upon action event (button click)
         @Override
         public void actionPerformed(ActionEvent e) {
             if (list.getSelectedIndex() >= 0) {
@@ -319,7 +354,11 @@ public class StudyStacks extends JFrame {
         }
     }
 
+    // Represents listener for previousCardButton for navigating to previous card in current stack
     private class PreviousCardListener implements ActionListener {
+
+        // MODIFIES: StudyStacks
+        // EFFECTS: navigates to previous card in selected stack upon action event (button click)
         @Override
         public void actionPerformed(ActionEvent e) {
             if (list.getSelectedIndex() >= 0) {
@@ -328,7 +367,11 @@ public class StudyStacks extends JFrame {
         }
     }
 
+    // Represents listener for flagCardButton for flagging card in current stack
     private class FlagCardListener implements ActionListener {
+
+        // MODIFIES: StudyStacks
+        // EFFECTS: flags or unflags selected card in stack upon action event (button click)
         @Override
         public void actionPerformed(ActionEvent e) {
             if (list.getSelectedIndex() >= 0 && !currentStack.getCards().isEmpty()) {
@@ -342,7 +385,11 @@ public class StudyStacks extends JFrame {
         }
     }
 
-    private class CardCreatorListener implements ListSelectionListener {
+    // Represents listener for StackList for detecting changes in selected stack
+    private class StackListListener implements ListSelectionListener {
+
+        // MODIFIES: StudyStacks
+        // EFFECTS: sets current card display panel to selected stack
         @Override
         public void valueChanged(ListSelectionEvent e) {
             int index = list.getSelectedIndex();
@@ -356,8 +403,11 @@ public class StudyStacks extends JFrame {
         }
     }
 
-    // randomizes Cards in selected card stack.
+    // Represents listener for randomizeButton for displaying cards in current stack in a randomized order
     private class RandomizeActionListener implements ActionListener {
+
+        // MODIFIES: StudyStacks
+        // EFFECTS: Displays cards in current stack in a randomized order upon action event
         @Override
         public void actionPerformed(ActionEvent e) {
             if (list.getSelectedIndex() >= 0 && !currentStack.getCards().isEmpty()) {
@@ -378,7 +428,11 @@ public class StudyStacks extends JFrame {
         }
     }
 
+    // Represents listener for viewFlaggedCardsButton for displaying flagged cards in current stack
     private class ViewFlaggedCardsListener implements ActionListener {
+
+        // MODIFIES: StudyStacks
+        // EFFECTS: Displays flagged cards in current stack upon action event
         @Override
         public void actionPerformed(ActionEvent e) {
             if (list.getSelectedIndex() >= 0 && !currentStack.getFlagged().isEmpty()) {
@@ -399,7 +453,11 @@ public class StudyStacks extends JFrame {
         }
     }
 
+    // Represents listener for flipCardButton for displaying other side of selected card in current stack
     private class FlipCardListener implements ActionListener {
+
+        // MODIFIES: StudyStacks
+        // EFFECTS: Displays other side of current card in selected stack in CurrentCardPanel
         @Override
         public void actionPerformed(ActionEvent e) {
             if (list.getSelectedIndex() >= 0 && !(currentStack.getCards().isEmpty())) {
@@ -408,7 +466,11 @@ public class StudyStacks extends JFrame {
         }
     }
 
+    // Represents listener for save Menu Item for saving allStacks to json file
     private class SaveListener implements ActionListener {
+
+        // MODIFIES: StudyStacks
+        // EFFECTS: saves all card stacks to file upon action event
         @Override
         public void actionPerformed(ActionEvent e) {
             saveAllStacks();
@@ -429,7 +491,11 @@ public class StudyStacks extends JFrame {
         }
     }
 
+    // Represents listener for load Menu Item for loading allStacks from json file
     private class LoadListener implements ActionListener {
+
+        // MODIFIES: StudyStacks
+        // EFFECTS: loads all card stacks from file upon action event
         @Override
         public void actionPerformed(ActionEvent e) {
             loadAllStacks();
@@ -450,7 +516,4 @@ public class StudyStacks extends JFrame {
             System.out.println("Given file " + SAVED_STACKS_JSON + "is not readable");
         }
     }
-
-    // TODO: style, fonts, centering
-
 }
