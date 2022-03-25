@@ -164,24 +164,6 @@ public class StudyStacks extends JFrame {
         flagIcon = new ImageIcon(newImg);
     }
 
-    private class DeleteListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            int index = list.getSelectedIndex();
-            if (index >= 0) {
-                allStacks.remove(index);
-                listModel.remove(index);
-            }
-            if (index == listModel.getSize()) {
-                index--;
-            }
-            list.revalidate();
-            list.repaint();
-            currentCardPanel.revalidate();
-            currentCardPanel.repaint();
-        }
-    }
-
     private class NewStackListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -217,6 +199,26 @@ public class StudyStacks extends JFrame {
                     currentCardPanel.repaint();
                 }
             }
+        }
+    }
+
+    private class DeleteListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int index = list.getSelectedIndex();
+            if (index >= 0) {
+                allStacks.remove(index);
+                listModel.remove(index);
+
+            }
+            if (index == listModel.getSize()) {
+                index--;
+            }
+            // TODO: currentCardPanel.displayGraphic();
+            list.revalidate();
+            list.repaint();
+            currentCardPanel.revalidate();
+            currentCardPanel.repaint();
         }
     }
 
@@ -443,7 +445,6 @@ public class StudyStacks extends JFrame {
         }
     }
 
-    // TODO: confirm this works: if you can update from image to text dynamically. got it to work in new card listener.
     // TODO: when you add a card when the current stack is set to flaggedcards, it does not update the true list.
     // TODO: style, fonts, centering
 
