@@ -1,8 +1,31 @@
-[{
-    "cards": [{
-        "flag": true,
-        "side_b": "sssss",
-        "side_a": "first card"
-    }],
-    "label": "truth"
-}]
+[
+    {
+        "cards": [
+            {
+                "flag": false,
+                "side_b": "sssss",
+                "side_a": "first card"
+            },
+            {
+                "flag": false,
+                "side_b": "sssddddd",
+                "side_a": "second card"
+            },
+            {
+                "flag": true,
+                "side_b": "s;gll;gme",
+                "side_a": "third card"
+            },
+            {
+                "flag": true,
+                "side_b": "sfrgerss",
+                "side_a": "fourth card"
+            }
+        ],
+        "label": "truth"
+    },
+    {
+        "cards": [],
+        "label": "what"
+    }
+]

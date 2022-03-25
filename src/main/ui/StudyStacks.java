@@ -139,7 +139,7 @@ public class StudyStacks extends JFrame {
         StudyStacks studyStacks = new StudyStacks();
     }
 
-    public class StackList extends JPanel implements ListSelectionListener {
+    public class StackList extends JPanel {
         JScrollPane listScrollPane;
 
         public StackList() {
@@ -149,35 +149,11 @@ public class StudyStacks extends JFrame {
             }
             list = new JList(listModel);
             list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            list.addListSelectionListener(this);
             list.addListSelectionListener(new CardCreatorListener());
             list.setVisibleRowCount(30);
             listScrollPane = new JScrollPane(list);
             listScrollPane.setPreferredSize(new Dimension(100,500));
             add(listScrollPane, BorderLayout.CENTER);
-        }
-
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            if (e.getValueIsAdjusting() == false) {
-                int index = list.getSelectedIndex();
-                if (index == -1) {
-                    randomizeButton.setEnabled(false);
-                    viewFlaggedCardsButton.setEnabled(false);
-                } else if (allStacks.get(index).getCards().isEmpty()) {
-                    randomizeButton.setEnabled(false);
-                    viewFlaggedCardsButton.setEnabled(false);
-                }  else {
-                    deleteButton.setEnabled(true);
-                    newCardButton.setEnabled(true);
-                    randomizeButton.setEnabled(true);
-                    nextCardButton.setEnabled(true);
-                    previousCardButton.setEnabled(true);
-                    flagCardButton.setEnabled(true);
-                    viewFlaggedCardsButton.setEnabled(true);
-                    flipCardButton.setEnabled(true);
-                }
-            }
         }
     }
 
@@ -240,17 +216,6 @@ public class StudyStacks extends JFrame {
                     currentCardPanel.revalidate();
                     currentCardPanel.repaint();
                 }
-            }
-        }
-    }
-
-    // randomizes Cards in selected card stack.
-    private class RandomizeActionListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (list.getSelectedIndex() >= 0) {
-                currentCardPanel.revalidate();
-                currentCardPanel.repaint();
             }
         }
     }
@@ -383,6 +348,28 @@ public class StudyStacks extends JFrame {
         }
     }
 
+    // randomizes Cards in selected card stack.
+    private class RandomizeActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (list.getSelectedIndex() >= 0 && !currentStack.getCards().isEmpty()) {
+                ArrayList<Card> randomized = new ArrayList<>(currentStack.getCards());
+                Collections.shuffle(randomized);
+                CardStack randomCards = new CardStack("random");
+                for (Card c : randomized) {
+                    randomCards.addCard(c);
+                }
+                try {
+                    currentStack = randomCards;
+                    currentCardPanel = new CurrentCardPanel(currentStack);
+                } catch (Exception ee) {
+                    currentStack = null;
+                }
+                verticalSplitPane.setBottomComponent(currentCardPanel);
+            }
+        }
+    }
+
     private class ViewFlaggedCardsListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -398,7 +385,7 @@ public class StudyStacks extends JFrame {
                     currentStack = null;
                 }
                 verticalSplitPane.setBottomComponent(currentCardPanel);
-            } else if (list.getSelectedIndex() >= 0) {
+            } else if (list.getSelectedIndex() >= 0 && !currentStack.getCards().isEmpty()) {
                 JOptionPane.showMessageDialog(viewFlaggedCardsButton, "No flagged cards in stack!");
             }
         }
@@ -407,7 +394,7 @@ public class StudyStacks extends JFrame {
     private class FlipCardListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (list.getSelectedIndex() >= 0) {
+            if (list.getSelectedIndex() >= 0 && !(currentStack.getCards().isEmpty())) {
                 currentCardPanel.flipCard();
             }
         }
@@ -457,7 +444,6 @@ public class StudyStacks extends JFrame {
     }
 
     // TODO: confirm this works: if you can update from image to text dynamically. got it to work in new card listener.
-    // TODO: randomizer, view flagged cards. trick for both would be to change display pane for alternate cards
     // TODO: when you add a card when the current stack is set to flaggedcards, it does not update the true list.
     // TODO: style, fonts, centering
 
