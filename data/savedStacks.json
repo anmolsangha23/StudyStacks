@@ -1,15 +1,8 @@
 [{
-    "cards": [
-        {
-            "flag": false,
-            "side_b": "you are currently reading this",
-            "side_a": "fact one"
-        },
-        {
-            "flag": false,
-            "side_b": "some people believe in ghosts",
-            "side_a": "fact two"
-        }
-    ],
+    "cards": [{
+        "flag": true,
+        "side_b": "sssss",
+        "side_a": "first card"
+    }],
     "label": "truth"
 }]

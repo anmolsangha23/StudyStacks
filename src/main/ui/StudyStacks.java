@@ -2,6 +2,8 @@ package ui;
 
 import model.Card;
 import model.CardStack;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -9,6 +11,8 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -20,6 +24,7 @@ public class StudyStacks extends JFrame {
     JMenuItem save;
     JMenuItem load;
     StackList stackList;
+    JSplitPane splitPane;
     JSplitPane verticalSplitPane;
     JButton newStackButton;
     JButton deleteButton;
@@ -35,13 +40,22 @@ public class StudyStacks extends JFrame {
     DefaultListModel listModel;
     private ArrayList<CardStack> allStacks;
     private CardStack currentStack;
+    private JsonWriter writer;
+    private JsonReader reader;
+
     CurrentCardPanel currentCardPanel;
+
+    private static final String SAVED_STACKS_JSON = "./data/savedStacks.json";
 
     public StudyStacks() {
         super("StudyStacks");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(1250, 600));
-        allStacks = new ArrayList<>();
+        if (allStacks == null) {
+            allStacks = new ArrayList<>();
+        }
+        writer = new JsonWriter(SAVED_STACKS_JSON);
+        reader = new JsonReader(SAVED_STACKS_JSON);
 
         initMenu();
 
@@ -54,8 +68,10 @@ public class StudyStacks extends JFrame {
         currentCardPanel = new CurrentCardPanel(currentStack);
         verticalSplitPane.setBottomComponent(currentCardPanel);
 
-        JSplitPane splitPane = new JSplitPane();
-        stackList = new StackList();
+        splitPane = new JSplitPane();
+        if (stackList == null) {
+            stackList = new StackList();
+        }
         splitPane.setLeftComponent(stackList);
         splitPane.setRightComponent(verticalSplitPane);
         splitPane.setDividerLocation(150);
@@ -124,6 +140,7 @@ public class StudyStacks extends JFrame {
     }
 
     public class StackList extends JPanel implements ListSelectionListener {
+        JScrollPane listScrollPane;
 
         public StackList() {
             listModel = new DefaultListModel();
@@ -135,7 +152,7 @@ public class StudyStacks extends JFrame {
             list.addListSelectionListener(this);
             list.addListSelectionListener(new CardCreatorListener());
             list.setVisibleRowCount(30);
-            JScrollPane listScrollPane = new JScrollPane(list);
+            listScrollPane = new JScrollPane(list);
             listScrollPane.setPreferredSize(new Dimension(100,500));
             add(listScrollPane, BorderLayout.CENTER);
         }
@@ -194,10 +211,12 @@ public class StudyStacks extends JFrame {
         public void actionPerformed(ActionEvent e) {
             String newLabel = JOptionPane.showInputDialog(list, "Name of new stack:",
                     "Create New Stack", JOptionPane.PLAIN_MESSAGE);
-            allStacks.add(new CardStack(newLabel));
-            listModel.addElement(newLabel);
-            list.revalidate();
-            list.repaint();
+            if (newLabel != null) {
+                allStacks.add(new CardStack(newLabel));
+                listModel.addElement(newLabel);
+                list.revalidate();
+                list.repaint();
+            }
         }
     }
 
@@ -209,12 +228,18 @@ public class StudyStacks extends JFrame {
                         "Create New Card", JOptionPane.PLAIN_MESSAGE);
                 String newSideB = JOptionPane.showInputDialog(list, "Side B:",
                         "Create New Card", JOptionPane.PLAIN_MESSAGE);
-                Card newCard = new Card(newSideA,newSideB);
-                currentStack.addCard(newCard);
-                currentCardPanel.remove(currentCardPanel.splashImage);
-                currentCardPanel.displayCard();
-                currentCardPanel.revalidate();
-                currentCardPanel.repaint();
+                if ((newSideA != null) && (newSideB != null)) {
+                    Card newCard = new Card(newSideA,newSideB);
+                    currentStack.addCard(newCard);
+                    try {
+                        currentCardPanel.remove(currentCardPanel.splashImage);
+                    } catch (Exception notFirstException) {
+                        // For catching exceptions when nothing is removed yet functionality remains.
+                    }
+                    currentCardPanel.displayCard();
+                    currentCardPanel.revalidate();
+                    currentCardPanel.repaint();
+                }
             }
         }
     }
@@ -335,6 +360,11 @@ public class StudyStacks extends JFrame {
         public void actionPerformed(ActionEvent e) {
             if (list.getSelectedIndex() >= 0) {
                 currentCardPanel.currentCard.flagUpdate();
+                if (currentCardPanel.currentCard.isFlagged()) {
+                    JOptionPane.showMessageDialog(flagCardButton, "Card flagged!");
+                } else {
+                    JOptionPane.showMessageDialog(flagCardButton, "Card unflagged!");
+                }
             }
         }
     }
@@ -356,7 +386,21 @@ public class StudyStacks extends JFrame {
     private class ViewFlaggedCardsListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // change current card panel to display list of flagged cards only
+            if (list.getSelectedIndex() >= 0 && !currentStack.getFlagged().isEmpty()) {
+                CardStack flaggedCards = new CardStack("flagged");
+                for (Card c: currentStack.getFlagged()) {
+                    flaggedCards.addCard(c);
+                }
+                try {
+                    currentStack = flaggedCards;
+                    currentCardPanel = new CurrentCardPanel(currentStack);
+                } catch (Exception ee) {
+                    currentStack = null;
+                }
+                verticalSplitPane.setBottomComponent(currentCardPanel);
+            } else if (list.getSelectedIndex() >= 0) {
+                JOptionPane.showMessageDialog(viewFlaggedCardsButton, "No flagged cards in stack!");
+            }
         }
     }
 
@@ -372,20 +416,49 @@ public class StudyStacks extends JFrame {
     private class SaveListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // save to json
+            saveAllStacks();
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: saves all card stacks to file
+    private void saveAllStacks() {
+        try {
+            writer.open();
+            writer.write(allStacks);
+            writer.close();
+            revalidate();
+            repaint();
+        } catch (FileNotFoundException e) {
+            System.out.println(SAVED_STACKS_JSON + " was unable to be opened to save card stacks");
         }
     }
 
     private class LoadListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // load from json
+            loadAllStacks();
         }
     }
 
-    // TODO: save listener , load listener
-    // TODO: confirm this works: if you can update from image to text dynamically. got it to work in newcard listener.
+    // MODIFIES: this
+    // EFFECTS: loads all card stacks previously saved from file
+    private void loadAllStacks() {
+        try {
+            allStacks = reader.read();
+            splitPane.remove(stackList);
+            stackList = new StackList();
+            splitPane.setLeftComponent(stackList);
+            revalidate();
+            repaint();
+        } catch (IOException e) {
+            System.out.println("Given file " + SAVED_STACKS_JSON + "is not readable");
+        }
+    }
+
+    // TODO: confirm this works: if you can update from image to text dynamically. got it to work in new card listener.
     // TODO: randomizer, view flagged cards. trick for both would be to change display pane for alternate cards
+    // TODO: when you add a card when the current stack is set to flaggedcards, it does not update the true list.
     // TODO: style, fonts, centering
 
 }
