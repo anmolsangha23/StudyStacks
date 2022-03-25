@@ -214,7 +214,10 @@ public class StudyStacks extends JFrame {
             if (index == listModel.getSize()) {
                 index--;
             }
-            // TODO: currentCardPanel.displayGraphic();
+            if (currentStack == null || !currentStack.getCards().isEmpty()) {
+                currentCardPanel.remove(currentCardPanel.cardDisplay);
+                currentCardPanel.add(currentCardPanel.splashImage);
+            }
             list.revalidate();
             list.repaint();
             currentCardPanel.revalidate();
@@ -234,6 +237,7 @@ public class StudyStacks extends JFrame {
             cardDisplay.setEditable(false);
             cardDisplay.setBackground(Color.white);
             cardDisplay.setContentType("text/plain");
+            initSplashImage();
             this.currentCardStack = cardStack;
             if (currentCardStack != null) {
                 if (currentCardStack.getCards().isEmpty()) {
@@ -247,15 +251,19 @@ public class StudyStacks extends JFrame {
         }
 
         public void displayGraphic() {
+            initSplashImage();
+            remove(cardDisplay);
+            this.revalidate();
+            this.repaint();
+            add(splashImage);
+        }
+
+        private void initSplashImage() {
             ImageIcon splashIcon = new ImageIcon("./data/studyStacksGraphic.jpg");
             Image flagImage = splashIcon.getImage();
             Image scaledSplashImage = flagImage.getScaledInstance(500, 300,SCALE_SMOOTH);
             splashIcon = new ImageIcon(scaledSplashImage);
             splashImage = new JLabel(splashIcon);
-            remove(cardDisplay);
-            this.revalidate();
-            this.repaint();
-            add(splashImage);
         }
 
         public void displayCard() {
@@ -300,8 +308,6 @@ public class StudyStacks extends JFrame {
             isSideA = !isSideA;
             displayCard();
         }
-
-
     }
 
     private class NextCardListener implements ActionListener {
@@ -325,7 +331,7 @@ public class StudyStacks extends JFrame {
     private class FlagCardListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (list.getSelectedIndex() >= 0) {
+            if (list.getSelectedIndex() >= 0 && !currentStack.getCards().isEmpty()) {
                 currentCardPanel.currentCard.flagUpdate();
                 if (currentCardPanel.currentCard.isFlagged()) {
                     JOptionPane.showMessageDialog(flagCardButton, "Card flagged!");
@@ -445,7 +451,6 @@ public class StudyStacks extends JFrame {
         }
     }
 
-    // TODO: when you add a card when the current stack is set to flaggedcards, it does not update the true list.
     // TODO: style, fonts, centering
 
 }
