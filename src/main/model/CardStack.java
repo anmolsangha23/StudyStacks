@@ -26,10 +26,11 @@ public class CardStack implements Writable {
         return cards;
     }
 
-    // MODIFIES: this
-    // EFFECTS: adds newCard to the card stack
+    // MODIFIES: this, theLog
+    // EFFECTS: adds newCard to the card stack. Updates event log upon occurrence.
     public void addCard(Card newCard) {
         cards.add(newCard);
+        EventLog.getInstance().logEvent(new Event("New card added to " + this.label));
     }
 
     // EFFECTS: returns all the flagged cards in the card stack

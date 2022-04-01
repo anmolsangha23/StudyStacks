@@ -40,5 +40,13 @@
             "side_a": "do laundry"
         }],
         "label": "notes"
+    },
+    {
+        "cards": [{
+            "flag": false,
+            "side_b": "b",
+            "side_a": "changes"
+        }],
+        "label": "cpsc 310"
     }
 ]

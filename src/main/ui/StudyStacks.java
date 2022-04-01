@@ -2,6 +2,8 @@ package ui;
 
 import model.Card;
 import model.CardStack;
+import model.Event;
+import model.EventLog;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
@@ -11,6 +13,8 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,7 +73,21 @@ public class StudyStacks extends JFrame {
         initSplitPane();
         pack();
         setLocationRelativeTo(null);
+        initEventLogListener();
         setVisible(true);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: initializes window listener for main frame that prints Event Log upon window closure.
+    private void initEventLogListener() {
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                for (Event event : EventLog.getInstance()) {
+                    System.out.println(event.toString() + "\n");
+                }
+            }
+        });
     }
 
     // MODIFIES: this

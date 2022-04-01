@@ -36,10 +36,15 @@ public class Card implements Writable {
         return flag;
     }
 
-    // MODIFIES: this
-    // EFFECTS: card is flagged if unflagged; card is unflagged if flagged.
+    // MODIFIES: this, theLog
+    // EFFECTS: card is flagged if unflagged; card is unflagged if flagged. Updates event log when flag status changed.
     public void flagUpdate() {
         flag = !flag;
+        if (isFlagged()) {
+            EventLog.getInstance().logEvent(new Event("Card flag status updated to flagged"));
+        } else {
+            EventLog.getInstance().logEvent(new Event("Card flag status updated to unflagged"));
+        }
     }
 
     // EFFECTS: returns Card as a JSON Object with keys "side_a", "side_b", "flag" for each field of Card.

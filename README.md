@@ -23,3 +23,14 @@ StudyStacks may be helpful if you find yourself in any of these situations:
 - As a user, I want to be able to view the cards in my stack in a random order.
 - As a user, I want to be able to save my card stacks to a file.
 - As a user, I want to be able to load my card stacks from a file previously saved.
+
+### Sample of EventLog occurrences
+
+Fri Apr 01 09:34:18 PDT 2022
+New card added to CPSC 210
+
+Fri Apr 01 09:34:22 PDT 2022
+Card flag status updated to flagged
+
+Fri Apr 01 09:34:24 PDT 2022
+Card flag status updated to unflagged
