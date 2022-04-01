@@ -158,7 +158,7 @@ public class StudyStacks extends JFrame {
     }
 
     // Represents panel for displayed list of stacks
-    public class StackList extends JPanel {
+    private class StackList extends JPanel {
         JScrollPane listScrollPane;
 
         // EFFECTS: constructor for initialization of StackList with current allStacks

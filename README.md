@@ -24,7 +24,9 @@ StudyStacks may be helpful if you find yourself in any of these situations:
 - As a user, I want to be able to save my card stacks to a file.
 - As a user, I want to be able to load my card stacks from a file previously saved.
 
-### Sample of EventLog occurrences
+### Phase 4: Task 2
+
+#### Sample of EventLog occurrences
 
 Fri Apr 01 09:34:18 PDT 2022
 New card added to CPSC 210
@@ -34,3 +36,13 @@ Card flag status updated to flagged
 
 Fri Apr 01 09:34:24 PDT 2022
 Card flag status updated to unflagged
+
+### Phase 4: Task 3
+
+The design of this program is quite well done in my humble opinion. If I had to implement changes, they would be as follows:
+- I would look into refactoring the implementation in StudyStacks such that the GUI can access the current stack by 
+checking the list of all stacks rather than having a separate field for the current CardStack.
+- I would also introduce hierarchies and refactor the GUI such that all the inner classes for visuals such as buttons and 
+frames so that the code is easier to update if I want to make the same visual changes to all buttons at the same time.
+
+
